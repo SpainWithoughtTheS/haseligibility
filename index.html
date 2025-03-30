@@ -43,21 +43,42 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .leaderboard {
+            margin-top: 20px;
+        }
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .leaderboard table, th, td {
+            border: 1px solid #ddd;
+        }
+        .leaderboard th, td {
+            padding: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Eligibility Calculator</h2>
-    
+
+    <!-- Name and Discord Name Input -->
+    <label>Your Name (Discord Name if applicable)</label>
+    <input type="text" id="name" required>
+
     <label>Final Grade (%)</label>
-    <input type="number" id="grade" required>
+    <input type="number" id="grade" required min="0" max="100">
 
     <label>Mentor Meetings Attended</label>
-    <input type="number" id="meetings" required>
+    <input type="number" id="meetings" required min="0" max="5">
 
     <label>Webinars Attended</label>
-    <input type="number" id="webinars" required>
+    <input type="number" id="webinars" required min="0" max="5">
+
+    <label>EDC Meetings Attended (must attend all 5)</label>
+    <input type="number" id="edc" required min="0" max="5">
 
     <label>Assignments Missed</label>
     <input type="number" id="missed" required>
@@ -71,19 +92,70 @@
     <button onclick="checkEligibility()">Check Eligibility</button>
 
     <p id="result"></p>
+
+    <!-- Leaderboard Display -->
+    <div class="leaderboard">
+        <h3>Leaderboard</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard">
+                <!-- Leaderboard entries will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
+    let leaderboard = [];
+
     function checkEligibility() {
+        let name = document.getElementById("name").value.trim();
         let grade = parseFloat(document.getElementById("grade").value);
         let meetings = parseInt(document.getElementById("meetings").value);
         let webinars = parseInt(document.getElementById("webinars").value);
+        let edc = parseInt(document.getElementById("edc").value);
         let missed = parseInt(document.getElementById("missed").value);
         let caught = parseInt(document.getElementById("caught").value);
         let late = parseInt(document.getElementById("late").value);
 
+        // Ensure name is not empty
+        if (name === "") {
+            alert("Please enter your name.");
+            return;
+        }
+
+        // Validation: Ensure values are within the allowed range
+        if (grade < 0 || grade > 100) {
+            alert("Grade must be between 0 and 100.");
+            return;
+        }
+
+        if (meetings < 0 || meetings > 5) {
+            alert("Mentor Meetings must be between 0 and 5.");
+            return;
+        }
+
+        if (webinars < 0 || webinars > 5) {
+            alert("Webinars Attended must be between 0 and 5.");
+            return;
+        }
+
+        if (edc !== 5) {  // EDC meetings must be exactly 5
+            alert("You must attend all 5 EDC meetings.");
+            return;
+        }
+
+        // Calculate score based on grade
+        let score = grade;
+
+        // Check eligibility
         if (
-            grade > 70 &&
+            grade >=70 &&
             meetings >= 5 &&
             webinars >= 1 &&
             missed <= 1 &&
@@ -92,10 +164,35 @@
         ) {
             document.getElementById("result").innerHTML = "✅ Eligible";
             document.getElementById("result").style.color = "green";
+            addToLeaderboard(name, score);
         } else {
             document.getElementById("result").innerHTML = "❌ Not Eligible";
             document.getElementById("result").style.color = "red";
         }
+    }
+
+    function addToLeaderboard(name, score) {
+        // Ensure unique names in the leaderboard
+        let existingIndex = leaderboard.findIndex(entry => entry.name.toLowerCase() === name.toLowerCase());
+        
+        if (existingIndex !== -1) {
+            // Update score for existing name
+            leaderboard[existingIndex].score = score;
+        } else {
+            // Add new entry if name is unique
+            leaderboard.push({ name: name, score: score });
+        }
+
+        // Sort leaderboard in descending order of score
+        leaderboard.sort((a, b) => b.score - a.score);
+
+        // Update the leaderboard display
+        let leaderboardHtml = '';
+        for (let i = 0; i < leaderboard.length; i++) {
+            leaderboardHtml += `<tr><td>${leaderboard[i].name}</td><td>${leaderboard[i].score}</td></tr>`;
+        }
+
+        document.getElementById("leaderboard").innerHTML = leaderboardHtml;
     }
 </script>
 
