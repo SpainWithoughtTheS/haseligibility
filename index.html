@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eligibility Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Eligibility Calculator</h2>
+    
+    <label>Final Grade (%)</label>
+    <input type="number" id="grade" required>
+
+    <label>Mentor Meetings Attended</label>
+    <input type="number" id="meetings" required>
+
+    <label>Webinars Attended</label>
+    <input type="number" id="webinars" required>
+
+    <label>Assignments Missed</label>
+    <input type="number" id="missed" required>
+
+    <label>Assignments Caught for AI</label>
+    <input type="number" id="caught" required>
+
+    <label>Assignments Late</label>
+    <input type="number" id="late" required>
+
+    <button onclick="checkEligibility()">Check Eligibility</button>
+
+    <p id="result"></p>
+</div>
+
+<script>
+    function checkEligibility() {
+        let grade = parseFloat(document.getElementById("grade").value);
+        let meetings = parseInt(document.getElementById("meetings").value);
+        let webinars = parseInt(document.getElementById("webinars").value);
+        let missed = parseInt(document.getElementById("missed").value);
+        let caught = parseInt(document.getElementById("caught").value);
+        let late = parseInt(document.getElementById("late").value);
+
+        if (
+            grade > 70 &&
+            meetings >= 5 &&
+            webinars >= 1 &&
+            missed <= 1 &&
+            caught <= 2 &&
+            late <= 2
+        ) {
+            document.getElementById("result").innerHTML = "✅ Eligible";
+            document.getElementById("result").style.color = "green";
+        } else {
+            document.getElementById("result").innerHTML = "❌ Not Eligible";
+            document.getElementById("result").style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
