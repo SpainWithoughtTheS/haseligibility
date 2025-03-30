@@ -111,7 +111,8 @@
 </div>
 
 <script>
-    let leaderboard = [];
+    // Load leaderboard data from localStorage if it exists
+    let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
     function checkEligibility() {
         let name = document.getElementById("name").value.trim();
@@ -155,7 +156,7 @@
 
         // Check eligibility
         if (
-            grade >=70 &&
+            grade >= 70 &&
             meetings >= 5 &&
             webinars >= 1 &&
             missed <= 1 &&
@@ -186,7 +187,20 @@
         // Sort leaderboard in descending order of score
         leaderboard.sort((a, b) => b.score - a.score);
 
+        // Save updated leaderboard to localStorage
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
         // Update the leaderboard display
+        let leaderboardHtml = '';
+        for (let i = 0; i < leaderboard.length; i++) {
+            leaderboardHtml += `<tr><td>${leaderboard[i].name}</td><td>${leaderboard[i].score}</td></tr>`;
+        }
+
+        document.getElementById("leaderboard").innerHTML = leaderboardHtml;
+    }
+
+    // Load the leaderboard when the page loads
+    window.onload = function() {
         let leaderboardHtml = '';
         for (let i = 0; i < leaderboard.length; i++) {
             leaderboardHtml += `<tr><td>${leaderboard[i].name}</td><td>${leaderboard[i].score}</td></tr>`;
